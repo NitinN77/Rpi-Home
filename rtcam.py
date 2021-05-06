@@ -1,6 +1,10 @@
 import cv2
 import sys
 import RPi.GPIO as GPIO
+import Adafruit_DHT
+
+DHT_SENSOR = Adafruit_DHT.AM2302
+DHT_PIN = 4
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -12,6 +16,7 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 video_capture = cv2.VideoCapture(0)
 
 while True:
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
     ret, frame = video_capture.read()
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -23,7 +28,7 @@ while True:
         minSize=(30, 30),
         flags=cv2.CASCADE_SCALE_IMAGE
     )
-    if len(faces):
+    if len(faces) or temperature > 36:
     	GPIO.output(21,GPIO.HIGH)
     else:
     	GPIO.output(21,GPIO.LOW)
