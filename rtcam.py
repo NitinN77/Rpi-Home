@@ -9,6 +9,7 @@ DHT_PIN = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(21,GPIO.OUT)
+GPIO.setup(20,GPIO.OUT)
 
 cascPath = sys.argv[1]
 faceCascade = cv2.CascadeClassifier(cascPath)
@@ -28,10 +29,15 @@ while True:
         minSize=(30, 30),
         flags=cv2.CASCADE_SCALE_IMAGE
     )
-    if len(faces) or temperature > 36:
+    if len(faces):
     	GPIO.output(21,GPIO.HIGH)
     else:
     	GPIO.output(21,GPIO.LOW)
+
+    if temperature > 36:
+    	GPIO.output(20,GPIO.HIGH)
+    else:
+    	GPIO.output(20,GPIO.LOW)
 
     for (x, y, w, h) in faces:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
